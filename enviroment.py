@@ -2,6 +2,7 @@
 import random
 info = r'info.json'
 index = r'index.xlsx'
+path = r'C:\Users\root\Pictures\same\download\\'
 
 
 def headers():

@@ -98,18 +98,25 @@ def get_image(image_url, image_id, user_id, value_dict):
     path = value_dict['path']
     channel = value_dict['channel']
     t = value_dict['t']
+    r = requests.get(image_url)
+
+    img_name = path
+    img_dir = img_name + '\\' + image_id + 'same' + user_id + '.jpg'  # “same”使得以大图标查看时，用户名都在第二行
+    with open(img_dir, 'wb') as f:
+        f.write(r.content)
+
     if len(t) == 1:
-        img_name = path + t[0]
+        img_name = enviroment.path + t[0] + '\\' + channel
     else:
-        img_name = path + t[0] + '-' + t[1]
+        img_name = enviroment.path + t[0] + '-' + t[1] + '\\' + channel
     is_exists = os.path.exists(img_name)
     if not is_exists:
         print 'build path = ' + img_name
         os.makedirs(img_name)
     img_dir = img_name + '\\' + image_id + 'same' + user_id + '.jpg'  # “same”使得以大图标查看时，用户名都在第二行
-    r = requests.get(image_url)
     with open(img_dir, 'wb') as f:
         f.write(r.content)
+
     num_of_image += 1
     print channel + ' ' + str(image_id) + ' : ' + 'image ' + str(num_of_image)
 
