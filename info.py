@@ -4,6 +4,18 @@ import json
 import enviroment
 
 
+def show(channel_name):
+    with open('info.json') as f:
+        info = json.loads(f.read())
+    f.close()
+    if channel_name == 'all':
+        for name in info['ids'].items():
+            print name[0].encode('GBK'), '\n', info['urls'][info['ids'][name[0]]], info['paths'][info['ids'][name[0]]]
+    else:
+        print channel_name, info['urls'][info['ids'][channel_name.decode('GBK')]], \
+            info['paths'][info['ids'][channel_name.decode('GBK')]]
+
+
 def add(new_info, default):
     channel_name = new_info[0].decode('GBK')
     channel_id = new_info[1]

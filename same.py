@@ -1,5 +1,9 @@
 # -*- coding: UTF-8 -*-
 # 处理输入指令
+"""
+2017.9.2
+可以显示预设频道信息
+"""
 import time
 import argparse
 # 以下为自建模块
@@ -32,6 +36,8 @@ if __name__ == '__main__':
                         help=u'add,加入新的或更新预设频道信息；格式：“频道名 id 路径”'.encode('GBK'))
     parser.add_argument('-ad', nargs='?', const=False, default=True,
                         help=u'not add default,选择此选项则新频道不加入默认下载序列'.encode('GBK'))
+    parser.add_argument('-s', nargs='?', const='all', default=False,
+                        help=u'show,显示预设频道信息；无参数则显示全部，格式：“频道名”'.encode('GBK'))
     parser.add_argument('-b', nargs='*', default=[],
                         help=u'build,建立新的索引；格式：“频道名”'.encode('GBK'))
     parser.add_argument('-d', nargs='*', default=[],
@@ -48,6 +54,8 @@ if __name__ == '__main__':
 
     if args.a:
         info.add(args.a, args.ad)
+    if args.s:
+        info.show(args.s)
     if args.b:
         build_index.index(args.b[0])
     if args.d:
