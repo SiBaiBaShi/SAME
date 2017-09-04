@@ -3,13 +3,17 @@
 """
 2017.9.2
 可以显示预设频道信息
+
+2017.9.4
+增加“-u”提示符，标识是否更新索引，以将更新索引单独划分出来，可以自由选择是否更新
+调整了输入指令位置以更易读
 """
 import time
 import argparse
 # 以下为自建模块
 import info
+import index
 import downlaod
-import build_index
 num_of_image = 0
 
 
@@ -38,10 +42,14 @@ if __name__ == '__main__':
                         help=u'not add default,选择此选项则新频道不加入默认下载序列'.encode('GBK'))
     parser.add_argument('-s', nargs='?', const='all', default=False,
                         help=u'show,显示预设频道信息；无参数则显示全部，格式：“频道名”'.encode('GBK'))
-    parser.add_argument('-b', nargs='*', default=[],
-                        help=u'build,建立新的索引；格式：“频道名”'.encode('GBK'))
     parser.add_argument('-d', nargs='*', default=[],
                         help=u'delete,删除频道预设信息；格式：“频道名(1) 频道名(2)”'.encode('GBK'))
+
+    parser.add_argument('-b', nargs='*', default=[],
+                        help=u'build,建立新的索引；格式：“频道名”'.encode('GBK'))
+    parser.add_argument('-u', nargs='?', const='all', default=False,
+                        help=u'update,更新索引；无参数则更新全部，格式：“频道名”'.encode('GBK'))
+
     parser.add_argument('-n', nargs='?', const=False, default=True,
                         help=u'not,若不下载图片，输入此提示符，无其它参数'.encode('GBK'))
     parser.add_argument('-c', nargs='*', default=[],
@@ -56,11 +64,13 @@ if __name__ == '__main__':
         info.add(args.a, args.ad)
     if args.s:
         info.show(args.s)
-    if args.b:
-        build_index.index(args.b[0])
     if args.d:
         info.delete(args.d)
 
-    # args.n默认为True，若不下载时，输入“-n”即变为False
+    if args.b:
+        index.build_index(args.b[0])
+    if args.u:
+        index.update_what(args.u)
+
     if args.n:
         downlaod.download(args.c, args.t, args.p)

@@ -2,13 +2,14 @@
 # 使用info.json中的信息下载图片
 """
 2017.9.1
-频道索引更新程序：
-1.修复了若程序更新当日没有图片，则更新程序会删除原本应被记录的索引的问题
-  如8.3下载8.1-8.2的图片，但8.3没有图片，则更新后删除8.2的索引，只有8.1的索引
-2.优化索引写入excel程序
+修改频道索引更新程序：
+1.若程序更新当日没有图片，则更新程序会删除原本应被记录的索引
+  如8.3下载8.1-8.2的图片，但8.3没有图片，则更新后只有8.1的图片，没有8.2的图片
+修改图片下载程序
 
-图片下载程序：
-修复了若输入时间末一天不在索引时间中，则不会下载的问题
+2017.9.4
+修改图片下载程序：
+下载的图片要求发布者必须为女性
 """
 import os
 import re
@@ -53,7 +54,6 @@ def download(c, t, p):
                 path = files.get(global_id)
             else:
                 path = paths.get(global_id)
-            update_index(urls.get(global_id), wb.sheets[channel.encode('GBK')])
             value_dict['t'] = t
             value_dict['path'] = path
             value_dict['channel'] = the_channel
@@ -67,7 +67,6 @@ def download(c, t, p):
                 path = files.get(global_id)
             else:
                 path = paths.get(global_id)
-            update_index(urls.get(global_id), wb.sheets[channel.encode('GBK')])
             value_dict['t'] = t
             value_dict['path'] = path
             value_dict['channel'] = the_channel
@@ -107,14 +106,14 @@ def update_index(url, sheet):
             next_url = 'https://v2.same.com' + response.json()['data']['next']
             response = pass_502(next_url)
             results = response.json()['data']['results']
-        excel_list.pop()
-        sheet.range('A1').api.EntireRow.Delete()
+    excel_list.pop()
+    sheet.range('A1').api.EntireRow.Delete()
     # 如果更新当日没有新的图片，则不删除
     if excel_list[0][2] == time.localtime(time.time()).tm_mday:
         excel_list.pop(0)
         sheet.range('A1').api.EntireRow.Delete()
     # 由于时间比较在新建单元格和写入list前，因此跳出循环时excel_list必然多一项重复的上次更新的最新时间，将其删除
-    for x in range(0, len(excel_list)):
+    for x in range(0, len(excel_list)):  # 第一个必然是今日的数据，但今日的不写入excel
         sheet.range('A'+str(x+1)).value = excel_list[x]
         print 'update index : ', excel_list[x]
 
@@ -142,7 +141,8 @@ def download_from_index(the_url, sheets, time_list, value_dict):
 def get_url(results, time_list, value_dict):
     stop = 1
     for photo in results:
-        if time_list[0] <= int(photo['created_at']) <= time_list[1] and re.search('jpg', photo['photo']) is not None:
+        if time_list[0] <= int(photo['created_at']) <= time_list[1] and re.search('jpg', photo['photo']) is not None \
+                and photo['user']['sex'] == 2:
             get_image(photo['photo'], str(photo['id']), str(photo['user_id']), value_dict)
         elif int(photo['created_at']) < time_list[0]:
             stop = 0
