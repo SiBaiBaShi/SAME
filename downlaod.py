@@ -8,8 +8,8 @@
 修改图片下载程序
 
 2017.9.4
-修改图片下载程序：
 下载的图片要求发布者必须为女性
+更新索引程序不再包含于下载程序
 """
 import os
 import re
@@ -19,6 +19,7 @@ import requests
 import xlwings as xw
 import enviroment
 num_of_image = 0
+times = 1
 
 
 def download(c, t, p):
@@ -179,13 +180,15 @@ def get_image(image_url, image_id, user_id, value_dict):
 
 
 def pass_502(url):
+    global times
     response = requests.get(url=url, headers=enviroment.headers())
     bad_gateway = 1
     while re.search('502 Bad Gateway', response.content) is not None:
         time.sleep(0.2)
         bad_gateway += 1
         response = requests.get(url=url, headers=enviroment.headers())
-    print 'bad gateway for ' + str(bad_gateway)
+    print 'bad gateway for ' + str(bad_gateway), times
+    times += 1
     return response
 
 
