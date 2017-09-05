@@ -10,6 +10,9 @@
 2017.9.4
 下载的图片要求发布者必须为女性
 更新索引程序不再包含于下载程序
+
+2017.9.5
+“秀出你的身材”频道只下载发布者是女性的图片
 """
 import os
 import re
@@ -142,8 +145,14 @@ def download_from_index(the_url, sheets, time_list, value_dict):
 def get_url(results, time_list, value_dict):
     stop = 1
     for photo in results:
-        if time_list[0] <= int(photo['created_at']) <= time_list[1] and re.search('jpg', photo['photo']) is not None \
-                and photo['user']['sex'] == 2:
+        if photo['channel']['name'] == u'秀出你的身材':
+            if time_list[0] <= int(photo['created_at']) <= time_list[1] and re.search('jpg', photo['photo']) \
+                    is not None and photo['user']['sex'] == 2:
+                get_image(photo['photo'], str(photo['id']), str(photo['user_id']), value_dict)
+            elif int(photo['created_at']) < time_list[0]:
+                stop = 0
+                return stop
+        elif time_list[0] <= int(photo['created_at']) <= time_list[1] and re.search('jpg', photo['photo']) is not None:
             get_image(photo['photo'], str(photo['id']), str(photo['user_id']), value_dict)
         elif int(photo['created_at']) < time_list[0]:
             stop = 0
