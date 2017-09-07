@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 import random
-info = r'info.json'
-index = r'index.xlsx'
-path = r'C:\Users\root\Pictures\same\download\\'
+INDEX = r'index.xlsx'
+INFO = r'info.json'
+PATH = r'C:\Users\root\Pictures\same\download\\'
 
 
 def headers():

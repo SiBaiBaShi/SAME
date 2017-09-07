@@ -4,9 +4,10 @@
 2017.9.4
 将索引更新程序加入该程序，并改名为index（原名为“build_index”）
 """
-import re
 import json
+import re
 import time
+
 import requests
 import xlwings as xw
 # 以下为自己编写的库文件
@@ -16,9 +17,9 @@ times = 1
 
 def update_what(channels):
     app = xw.App(visible=True, add_book=False)
-    wb = app.books.open(enviroment.index)
+    wb = app.books.open(enviroment.INDEX)
 
-    with open(enviroment.info) as i:
+    with open(enviroment.INFO) as i:
         megs = json.loads(i.read())
     ids = megs['ids']
     urls = megs['urls']
@@ -51,7 +52,8 @@ def update_index(url, sheet):
     last_day = sheet.range('C1').value
     if year != last_year or mon != last_mon or day != last_day:
         t_list = [year, mon, day, 0, 0, 0, 0, 0, 0]  # 用于使用生成以秒计时间
-        excel_list.append([year, mon, day, results[0]['id'], time.mktime(t_list) / 100])
+        excel_list.append([year, mon, day, results[0]['id'],
+                           time.mktime(t_list) / 100])
         sheet.range('A1').api.EntireRow.Insert()
     while finish:
         for text in results:
@@ -66,7 +68,8 @@ def update_index(url, sheet):
                     mon = t.tm_mon
                     day = t.tm_mday
                     t_list = [year, mon, day, 0, 0, 0, 0, 0, 0]  # 用于使用生成以秒计时间
-                    excel_list.append([year, mon, day, text['id'], time.mktime(t_list) / 100])
+                    excel_list.append([year, mon, day, text['id'],
+                                       time.mktime(t_list) / 100])
                     sheet.range('A1').api.EntireRow.Insert()
         if finish:
             next_url = 'https://v2.same.com' + response.json()['data']['next']
@@ -86,14 +89,14 @@ def update_index(url, sheet):
 
 
 def build_index(sheet_name):
-    with open(enviroment.info) as i:
+    with open(enviroment.INFO) as i:
         megs = json.loads(i.read())
     i.close()
     ids = megs['ids']
     urls = megs['urls']
 
     app = xw.App(visible=True, add_book=False)
-    wb = app.books.open(enviroment.index)
+    wb = app.books.open(enviroment.INDEX)
     wb.sheets.add(sheet_name)
     row = 1
 
@@ -134,8 +137,10 @@ def get_index(results, value_list):
                                       time.localtime(photo['created_at']).tm_mday,
                                       0, 0, 0, 0, 0, 0])
                 sheet.range('A'+str(row)).value =\
-                    [time.localtime(photo['created_at']).tm_year, time.localtime(photo['created_at']).tm_mon,
-                     time.localtime(photo['created_at']).tm_mday, photo['id'], s_time / 100]
+                    [time.localtime(photo['created_at']).tm_year,
+                     time.localtime(photo['created_at']).tm_mon,
+                     time.localtime(photo['created_at']).tm_mday,
+                     photo['id'], s_time / 100]
                 day = sheet.range('C'+str(row)).value
                 mon = sheet.range('B'+str(row)).value
                 if time.localtime(results[len(results) - 1]['created_at']).tm_mday == day\

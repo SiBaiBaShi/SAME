@@ -1,11 +1,12 @@
 # -*- coding: UTF-8 -*-
 # 用于完整下载某用户所有图片
+import argparse
 import os
+import random
 import re
 import time
-import random
+
 import requests
-import argparse
 
 
 def gen_id(length):

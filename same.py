@@ -8,12 +8,12 @@
 增加“-u”提示符，标识是否更新索引，以将更新索引单独划分出来，可以自由选择是否更新
 调整了输入指令位置以更易读
 """
-import time
 import argparse
+import time
 # 以下为自建模块
-import info
-import index
 import downlaod
+import index
+import info
 num_of_image = 0
 
 

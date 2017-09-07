@@ -14,12 +14,14 @@
 2017.9.5
 “秀出你的身材”频道只下载发布者是女性的图片，不再要求所有频道都只下载发布者是女性的图片
 """
+import json
 import os
 import re
 import time
-import json
+
 import requests
 import xlwings as xw
+
 import enviroment
 num_of_image = 0
 times = 1
@@ -28,7 +30,7 @@ times = 1
 def download(c, t, p):
     value_dict = {}
 
-    with open(enviroment.info) as i:
+    with open(enviroment.INFO) as i:
         megs = json.loads(i.read())
     ids = megs['ids']
     urls = megs['urls']
@@ -47,7 +49,7 @@ def download(c, t, p):
             files[ids[p[i].decode('GBK')]] = p[i+1].decode('GBK')
 
     app = xw.App(visible=True, add_book=False)
-    wb = app.books.open(enviroment.index)
+    wb = app.books.open(enviroment.INDEX)
     start_time = time.asctime(time.localtime(time.time()))
     if channels:
         for channel in channels:
@@ -61,7 +63,9 @@ def download(c, t, p):
             value_dict['t'] = t
             value_dict['path'] = path
             value_dict['channel'] = the_channel
-            download_from_index(urls.get(global_id), wb.sheets[channel.encode('GBK')], time_list, value_dict)
+            download_from_index(urls.get(global_id),
+                                wb.sheets[channel.encode('GBK')],
+                                time_list, value_dict)
     else:
         for channel in names:
             print channel.encode('GBK')
@@ -74,7 +78,9 @@ def download(c, t, p):
             value_dict['t'] = t
             value_dict['path'] = path
             value_dict['channel'] = the_channel
-            download_from_index(urls.get(global_id), wb.sheets[channel.encode('GBK')], time_list, value_dict)
+            download_from_index(urls.get(global_id),
+                                wb.sheets[channel.encode('GBK')],
+                                time_list, value_dict)
     print start_time, '\n', time.asctime(time.localtime(time.time()))
 
     wb.save()
@@ -104,7 +110,8 @@ def update_index(url, sheet):
                     mon = t.tm_mon
                     day = t.tm_mday
                     t_list = [year, mon, day, 0, 0, 0, 0, 0, 0]  # 用于使用生成以秒计时间
-                    excel_list.append([year, mon, day, text['id'], time.mktime(t_list) / 100])
+                    excel_list.append([year, mon, day, text['id'],
+                                       time.mktime(t_list) / 100])
                     sheet.range('A1').api.EntireRow.Insert()
         if finish:
             next_url = 'https://v2.same.com' + response.json()['data']['next']
@@ -146,13 +153,15 @@ def get_url(results, time_list, value_dict):
     stop = 1
     for photo in results:
         if photo['channel']['name'] == u'秀出你的身材':
-            if time_list[0] <= int(photo['created_at']) <= time_list[1] and re.search('jpg', photo['photo']) \
-                    is not None and photo['user']['sex'] == 2:
+            if time_list[0] <= int(photo['created_at']) <= time_list[1] \
+                    and re.search('jpg', photo['photo']) is not None \
+                    and photo['user']['sex'] == 2:
                 get_image(photo['photo'], str(photo['id']), str(photo['user_id']), value_dict)
             elif int(photo['created_at']) < time_list[0]:
                 stop = 0
                 return stop
-        elif time_list[0] <= int(photo['created_at']) <= time_list[1] and re.search('jpg', photo['photo']) is not None:
+        elif time_list[0] <= int(photo['created_at']) <= time_list[1] \
+                and re.search('jpg', photo['photo']) is not None:
             get_image(photo['photo'], str(photo['id']), str(photo['user_id']), value_dict)
         elif int(photo['created_at']) < time_list[0]:
             stop = 0
@@ -173,9 +182,9 @@ def get_image(image_url, image_id, user_id, value_dict):
         f.write(r.content)
 
     if len(t) == 1:
-        img_name = enviroment.path + t[0] + '\\' + channel
+        img_name = enviroment.PATH + t[0] + '\\' + channel
     else:
-        img_name = enviroment.path + t[0] + '-' + t[1] + '\\' + channel
+        img_name = enviroment.PATH + t[0] + '-' + t[1] + '\\' + channel
     is_exists = os.path.exists(img_name)
     if not is_exists:
         print 'build path = ' + img_name
