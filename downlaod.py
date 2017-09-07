@@ -87,48 +87,6 @@ def download(c, t, p):
     app.quit()
 
 
-def update_index(url, sheet):
-    excel_list = []
-    finish = 1  # 标记是否更新到之前索引的最近一天
-    response = pass_502(url)
-    results = response.json()['data']['results']
-    year = mon = day = 1  # 保存这次更新中最新写入的时间
-    # 以下三个时间是之前索引的最近年、月、日，是比较的对象
-    last_year = sheet.range('A1').value
-    last_mon = sheet.range('B1').value
-    last_day = sheet.range('C1').value
-    while finish:
-        for text in results:
-            if year == last_year and mon == last_mon and day == last_day:
-                finish = 0
-                break
-            else:
-                # t的时间为当前数据包中循环到的图片的时间
-                t = time.localtime(text['created_at'])
-                if year != t.tm_year or mon != t.tm_mon or day != t.tm_mday:
-                    year = t.tm_year
-                    mon = t.tm_mon
-                    day = t.tm_mday
-                    t_list = [year, mon, day, 0, 0, 0, 0, 0, 0]  # 用于使用生成以秒计时间
-                    excel_list.append([year, mon, day, text['id'],
-                                       time.mktime(t_list) / 100])
-                    sheet.range('A1').api.EntireRow.Insert()
-        if finish:
-            next_url = 'https://v2.same.com' + response.json()['data']['next']
-            response = pass_502(next_url)
-            results = response.json()['data']['results']
-    excel_list.pop()
-    sheet.range('A1').api.EntireRow.Delete()
-    # 如果更新当日没有新的图片，则不删除
-    if excel_list[0][2] == time.localtime(time.time()).tm_mday:
-        excel_list.pop(0)
-        sheet.range('A1').api.EntireRow.Delete()
-    # 由于时间比较在新建单元格和写入list前，因此跳出循环时excel_list必然多一项重复的上次更新的最新时间，将其删除
-    for x in range(0, len(excel_list)):  # 第一个必然是今日的数据，但今日的不写入excel
-        sheet.range('A'+str(x+1)).value = excel_list[x]
-        print 'update index : ', excel_list[x]
-
-
 def download_from_index(the_url, sheets, time_list, value_dict):
     total_list = sheets.range('D1:E1500').value
     start = 0

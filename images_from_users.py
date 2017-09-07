@@ -43,10 +43,9 @@ def get_image(image_url, user_id):
 def to_image_url():
     global response, a
     results = response.json()['data']['results']
-    for i in range(0, len(results)):
-        if re.search('jpg', results[i]['photo']) is not None:
-            get_image(results[i]['photo'],
-                      results[i]['id'])
+    for photo in results:
+        if re.search('jpg', photo['photo']) is not None:
+            get_image(photo['photo'], photo['id'])
 
 
 def get_url(the_url):
@@ -86,10 +85,9 @@ def get_url(the_url):
         print 'bad gateway for ' + str(bad_gateway)
         to_image_url()
     results = response.json()['data']['results']
-    for i in range(0, len(results)):
-        if re.search('jpg', results[i]['photo']) is not None:
-            get_image(results[i]['photo'],
-                      results[i]['id'])
+    for photo in results:
+        if re.search('jpg', photo['photo']) is not None:
+            get_image(photo['photo'], photo['id'])
 
 
 if __name__ == '__main__':

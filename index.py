@@ -83,9 +83,9 @@ def update_index(url, sheet):
             excel_list.pop(0)
             sheet.range('A1').api.EntireRow.Delete()
         if excel_list:
-            for x in range(0, len(excel_list)):
-                sheet.range('A'+str(x+1)).value = excel_list[x]
-                print 'update index : ', excel_list[x]
+            for i, value in enumerate(excel_list, 1):
+                sheet.range('A'+str(i)).value = value
+                print 'update index : ', value
 
 
 def build_index(sheet_name):
@@ -127,8 +127,7 @@ def get_index(results, value_list):
     mon = sheet.range('B'+str(row)).value
     if time.localtime(results[len(results)-1]['created_at']).tm_mday != day\
             or time.localtime(results[len(results)-1]['created_at']).tm_mon != mon:
-        for i in range(0, len(results)):
-            photo = results[i]
+        for photo in results:
             if time.localtime(photo['created_at']).tm_mday != day\
                     or time.localtime(photo['created_at']).tm_mon != mon:
                 row += 1
