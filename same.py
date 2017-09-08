@@ -34,7 +34,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage='python %(prog)s [options]',
                                      description=u'same应用图片下载\n'
                                                  u'无任何参数则下载前一周预设频道的图片\n'
-                                                 u'默认均保存于\Saved Pictures\same\\new\\'.encode('GBK'),
+                                                 u'默认均保存于\Saved Pictures\same\download\\'.encode('GBK'),
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-a', nargs='*', default=[],
                         help=u'add,加入新的或更新预设频道信息；格式：“频道名 id 路径”'.encode('GBK'))
