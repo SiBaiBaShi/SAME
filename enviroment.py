@@ -1,7 +1,10 @@
 # -*- coding: UTF-8 -*-
+"""
+工程环境变量改为绝对路径
+"""
 import random
-INDEX = r'index.xlsx'
-INFO = r'info.json'
+INDEX = r'C:\Users\root\Documents\PycharmProjects\SAME\index.xlsx'
+INFO = r'C:\Users\root\Documents\PycharmProjects\SAME\info.json'
 PATH = r'C:\Users\root\Pictures\same\download\\'
 
 
